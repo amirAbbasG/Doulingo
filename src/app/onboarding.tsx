@@ -2,6 +2,7 @@ import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 import { images } from "@/constants/images";
 
@@ -23,8 +24,10 @@ export default function OnboardingScreen() {
         </View>
 
         <View className="mt-6">
-          <Text className="text-h1 text-text-primary">Your AI language</Text>
-          <Text className="text-h1 text-lingua-purple -top-2">teacher.</Text>
+          <Text className="text-h1 text-text-primary">
+            {"Your AI language\n"}
+          <Text className=" text-lingua-purple ">teacher.</Text>
+          </Text>
           <Text className="mt-1 text-body-md text-text-secondary">
             Real conversations, personalized lessons, anytime, anywhere.
           </Text>
@@ -65,6 +68,7 @@ export default function OnboardingScreen() {
         <View className="pb-2">
           <Pressable
             accessibilityRole="button"
+            onPress={() => router.push("/(auth)/sign-up" as any)}
             className="h-14 flex-row items-center justify-center gap-1 rounded-2xl bg-lingua-purple px-6 active:opacity-90"
           >
             <Text className=" text-center font-semibold text-[16px] text-white">
