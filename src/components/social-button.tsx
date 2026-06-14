@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import Ionicons from "@react-native-vector-icons/ionicons";
 
 interface SocialButtonProps {
   provider: "google" | "facebook" | "apple";
@@ -8,9 +8,9 @@ interface SocialButtonProps {
 }
 
 const icons = {
-  google: <AntDesign name="google" size={24} color="#DB4437" />,
-  facebook: <FontAwesome name="facebook" size={24} color="#1877F2" />,
-  apple: <AntDesign name="apple" size={24} color="#000" />,
+  google: <Ionicons name="logo-google" size={24} color="#DB4437" />,
+  facebook: <Ionicons name="logo-facebook" size={24} color="#1877F2" />,
+  apple: <Ionicons name="logo-apple" size={24} color="#000" />,
 };
 
 export default function SocialButton({
