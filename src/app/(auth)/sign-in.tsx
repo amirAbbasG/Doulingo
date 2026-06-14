@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 
-import { images } from "@/constants/images";
 import AuthTextField from "@/components/auth-text-field";
 import SocialButton from "@/components/social-button";
 import AuthDivider from "@/components/auth-divider";
 import VerificationModal from "@/components/verification-modal";
 import AuthHero from "@/components/auth-hero";
+import AuthHeader from "@/components/auth-header";
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
@@ -23,19 +21,11 @@ export default function SignInScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <View className="flex-1 px-5">
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="mt-2 h-10 w-10 items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={28} color="#0D132B" />
-        </TouchableOpacity>
+        <AuthHeader
+            title="Welcome back"
+            subtitle=" Sign in to continue your journey"
+        />
 
-        <View className="mt-2">
-          <Text className="text-h1 text-text-primary">Welcome back</Text>
-          <Text className="mt-1 text-body-md text-text-secondary">
-            Sign in to continue your journey
-          </Text>
-        </View>
 
         <AuthHero/>
 
