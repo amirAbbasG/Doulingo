@@ -5,11 +5,13 @@ import { router } from "expo-router";
 import { useSignUp } from "@clerk/expo";
 
 import AuthTextField from "@/components/auth-text-field";
-import SocialButton from "@/components/social-button";
 import AuthDivider from "@/components/auth-divider";
 import VerificationModal from "@/components/verification-modal";
 import AuthHero from "@/components/auth-hero";
 import AuthHeader from "@/components/auth-header";
+import GoogleSignInButton from "@/components/google-sign-in-button";
+import AppleSignInButton from "@/components/apple-sign-in-button";
+import FacebookSignInButton from "@/components/facebook-sign-in-button";
 
 export default function SignUpScreen() {
   const { signUp, errors, fetchStatus } = useSignUp();
@@ -145,9 +147,9 @@ export default function SignUpScreen() {
         </View>
 
         <View className="mt-5 gap-3">
-          <SocialButton provider="google" label="Continue with Google" />
-          <SocialButton provider="facebook" label="Continue with Facebook" />
-          <SocialButton provider="apple" label="Continue with Apple" />
+          <GoogleSignInButton />
+          <FacebookSignInButton />
+          <AppleSignInButton />
         </View>
 
         <View className="mt-auto pb-6">
