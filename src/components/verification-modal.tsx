@@ -38,6 +38,7 @@ export default function VerificationModal({
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
+          delay: 150
       }).start();
 
       Animated.spring(slideAnim, {
@@ -105,7 +106,7 @@ export default function VerificationModal({
   };
 
   return (
-    <Modal visible={visible} transparent statusBarTranslucent>
+    <Modal visible={visible} transparent statusBarTranslucent animationType="slide">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -120,17 +121,7 @@ export default function VerificationModal({
           />
         </TouchableWithoutFeedback>
 
-        <Animated.View
-          style={{
-            transform: [
-              {
-                translateY: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [400, 0],
-                }),
-              },
-            ],
-          }}
+        <View
           className="rounded-t-3xl bg-white px-6 pb-10 pt-6"
         >
           <View className="mb-1 flex-row items-center justify-between">
@@ -196,7 +187,7 @@ export default function VerificationModal({
           <TouchableOpacity className="mt-4 items-center">
             <Text className="text-body-md text-lingua-purple">Resend code</Text>
           </TouchableOpacity>
-        </Animated.View>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );
