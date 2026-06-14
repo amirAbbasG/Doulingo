@@ -1,12 +1,15 @@
+export type LanguageCode = "es" | "fr" | "ja" | "ko" | "de" | "zh";
+
 export interface Language {
-  id: string;
-  name: string;
-  code: string; // ISO 639-1 code
-  flag: string; // emoji flag
-  nativeName: string;
-  color: string;
-  learners: string
+    id: string;
+    name: string;
+    code: LanguageCode; // ISO 639-1 code
+    flag: string; // emoji flag
+    nativeName: string;
+    color: string;
+    learners: string;
 }
+
 
 export interface Vocabulary {
   id: string;
