@@ -13,7 +13,7 @@ import {Image} from "expo-image";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
 import {images} from "@/constants/images";
-import {languages} from "@/data/languages";
+import {languages} from "@/constants/languages";
 import type {Language} from "@/types/learning";
 import {useLanguageStore} from "@/store/language-store";
 
