@@ -25,14 +25,12 @@ export default function VerificationModal({
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const prevVisible = useRef(false);
-  const [slideAnim] = useState(() => new Animated.Value(0));
   const [overlayAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (visible && !prevVisible.current) {
       setCode(["", "", "", "", "", ""]);
       overlayAnim.setValue(0);
-      slideAnim.setValue(0);
 
       Animated.timing(overlayAnim, {
         toValue: 1,
@@ -41,19 +39,10 @@ export default function VerificationModal({
           delay: 150
       }).start();
 
-      Animated.spring(slideAnim, {
-        toValue: 1,
-        damping: 20,
-        stiffness: 90,
-        useNativeDriver: true,
-      }).start(() => {
-        setTimeout(() => {
-          inputRefs.current[0]?.focus();
-        }, 100);
-      });
+
     }
     prevVisible.current = visible;
-  }, [visible, overlayAnim, slideAnim]);
+  }, [visible, overlayAnim]);
 
   useEffect(() => {
     const fullCode = code.join("");
@@ -98,11 +87,6 @@ export default function VerificationModal({
       duration: 150,
       useNativeDriver: true,
     }).start();
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 150,
-      useNativeDriver: true,
-    }).start(() => onClose());
   };
 
   return (
