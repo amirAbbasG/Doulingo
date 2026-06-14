@@ -22,7 +22,7 @@ const AuthHeader: FC<IProps> = ({
                 <Ionicons name="chevron-back" size={28} color="#0D132B"/>
             </TouchableOpacity>
 
-            <View className="mt-6">
+            <View className="mt-5">
                 <Text className="text-h1 text-text-primary">{title}</Text>
                 <Text className="mt-1 text-body-md text-text-secondary">
                     {subtitle}
