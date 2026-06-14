@@ -1,3 +1,5 @@
+import Ionicons, {type IoniconsIconName} from "@react-native-vector-icons/ionicons";
+
 export type LanguageCode = "es" | "fr" | "ja" | "ko" | "de" | "zh";
 
 export interface Language {
@@ -80,4 +82,14 @@ export interface Unit {
   lessonIds: string[];
   color?: string;
   icon?: string;
+}
+
+export interface PlanItem {
+    id: string;
+    type: string;
+    title: string;
+    subtitle: string;
+    icon: IoniconsIconName;
+    iconColor: string;
+    iconBg: string;
 }
