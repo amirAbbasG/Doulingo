@@ -1,7 +1,8 @@
-import {useState} from "react";
-import {Text, TouchableOpacity, View} from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {router} from "expo-router";
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { useSignUp } from "@clerk/expo";
 
 import AuthTextField from "@/components/auth-text-field";
 import SocialButton from "@/components/social-button";
@@ -11,76 +12,167 @@ import AuthHero from "@/components/auth-hero";
 import AuthHeader from "@/components/auth-header";
 
 export default function SignUpScreen() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [showVerification, setShowVerification] = useState(false);
+  const { signUp, errors, fetchStatus } = useSignUp();
 
-    const handleSignUp = () => {
-        setShowVerification(true);
-    };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null
+  );
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
-    return (
-        <SafeAreaView style={{flex: 1, backgroundColor: "#FFFFFF"}}>
-            <View className="flex-1 px-5">
-                <AuthHeader
-                    title="Create your account"
-                    subtitle="Start your language journey today ✨"
-                />
+  const handleSignUp = async () => {
+    if (!email || !password) return;
 
-                <AuthHero/>
+    setIsSigningUp(true);
+    setVerificationError(null);
 
-                <View className="gap-3">
-                    <AuthTextField
-                        label="Email"
-                        value={email}
-                        onChangeText={setEmail}
-                        placeholder="alex@gmail.com"
-                        placeholderTextColor="#9CA3AF"
-                        keyboardType="email-address"
-                    />
-                    <AuthTextField
-                        label="Password"
-                        value={password}
-                        onChangeText={setPassword}
-                        placeholder="••••••••"
-                        placeholderTextColor="#9CA3AF"
-                        isPassword
-                    />
-                </View>
+    const createResult = await signUp.create({
+      emailAddress: email,
+      password,
+    });
 
-                <TouchableOpacity
-                    onPress={handleSignUp}
-                    className="mt-5 h-14 items-center justify-center rounded-2xl bg-lingua-purple active:opacity-90"
-                >
-                    <Text className="text-center font-semibold text-[16px] text-white">
-                        Sign Up
-                    </Text>
-                </TouchableOpacity>
+    if (createResult.error) {
+      setVerificationError(
+        createResult.error.longMessage || createResult.error.message
+      );
+      setIsSigningUp(false);
+      return;
+    }
 
-                <View className="mt-5">
-                    <AuthDivider/>
-                </View>
+    const sendResult = await signUp.verifications.sendEmailCode();
 
-                <View className="mt-5 gap-3">
-                    <SocialButton provider="google" label="Continue with Google"/>
-                    <SocialButton provider="facebook" label="Continue with Facebook"/>
-                    <SocialButton provider="apple" label="Continue with Apple"/>
-                </View>
+    console.log(sendResult)
+    if (sendResult.error) {
+      setVerificationError(
+        sendResult.error.longMessage || sendResult.error.message
+      );
+      setIsSigningUp(false);
+      return;
+    }
 
-                <View className="mt-auto pb-6">
-                    <TouchableOpacity onPress={() => router.push("/(auth)/sign-in" as any)}>
-                        <Text className="text-center text-body-md text-text-secondary">
-                            Already have an account?{" "}
-                            <Text className="font-semibold text-lingua-purple">Log in</Text>
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+    setShowVerification(true);
+    setIsSigningUp(false);
+  };
 
-            <VerificationModal
-                visible={showVerification}
-                onClose={() => setShowVerification(false)}
-            />
-        </SafeAreaView>
-    );
+  const handleVerify = async (code: string) => {
+    setIsSigningUp(true);
+    setVerificationError(null);
+
+    const result = await signUp.verifications.verifyEmailCode({ code });
+
+    if (result.error) {
+      setVerificationError(result.error.longMessage || result.error.message);
+      setIsSigningUp(false);
+      return;
+    }
+
+    if (signUp.status === "complete") {
+      await signUp.finalize();
+      setShowVerification(false);
+      router.push("/");
+    }
+
+    setIsSigningUp(false);
+  };
+
+  const handleResendCode = async () => {
+    const result = await signUp.verifications.sendEmailCode();
+    if (result.error) {
+      setVerificationError(
+        result.error.longMessage || result.error.message
+      );
+    } else {
+      setVerificationError(null);
+    }
+  };
+
+  const fieldErrors = errors?.fields;
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <View className="flex-1 px-5">
+        <AuthHeader
+          title="Create your account"
+          subtitle="Start your language journey today ✨"
+        />
+
+        <AuthHero />
+
+        <View className="gap-3">
+          <AuthTextField
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="alex@gmail.com"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="email-address"
+          />
+          <AuthTextField
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            placeholderTextColor="#9CA3AF"
+            isPassword
+          />
+        </View>
+
+        {fieldErrors?.emailAddress && (
+          <Text className="mt-1 text-sm text-red-500">
+            {fieldErrors.emailAddress.message}
+          </Text>
+        )}
+        {fieldErrors?.password && (
+          <Text className="mt-1 text-sm text-red-500">
+            {fieldErrors.password.message}
+          </Text>
+        )}
+
+        <TouchableOpacity
+          onPress={handleSignUp}
+          disabled={!email || !password || fetchStatus === "fetching"}
+          className="mt-5 h-14 items-center justify-center rounded-2xl bg-lingua-purple active:opacity-90 disabled:opacity-50"
+        >
+          <Text className="text-center font-semibold text-[16px] text-white">
+            {fetchStatus === "fetching" ? "Signing Up..." : "Sign Up"}
+          </Text>
+        </TouchableOpacity>
+
+        <View className="mt-5">
+          <AuthDivider />
+        </View>
+
+        <View className="mt-5 gap-3">
+          <SocialButton provider="google" label="Continue with Google" />
+          <SocialButton provider="facebook" label="Continue with Facebook" />
+          <SocialButton provider="apple" label="Continue with Apple" />
+        </View>
+
+        <View className="mt-auto pb-6">
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/sign-in" as any)}
+          >
+            <Text className="text-center text-body-md text-text-secondary">
+              Already have an account?{" "}
+              <Text className="font-semibold text-lingua-purple">Log in</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <VerificationModal
+        visible={showVerification}
+        onClose={() => {
+          setShowVerification(false);
+          setVerificationError(null);
+        }}
+        onVerify={handleVerify}
+        onResendCode={handleResendCode}
+        error={verificationError}
+        isLoading={isSigningUp}
+      />
+    </SafeAreaView>
+  );
 }

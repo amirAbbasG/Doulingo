@@ -10,17 +10,24 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from "react-native";
-import Ionicons  from "@react-native-vector-icons/ionicons";
-import { router } from "expo-router";
+import Ionicons from "@react-native-vector-icons/ionicons";
 
 interface VerificationModalProps {
   visible: boolean;
   onClose: () => void;
+  onVerify: (code: string) => void;
+  onResendCode?: () => void;
+  error?: string | null;
+  isLoading?: boolean;
 }
 
 export default function VerificationModal({
   visible,
   onClose,
+  onVerify,
+  onResendCode,
+  error,
+  isLoading = false,
 }: VerificationModalProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(TextInput | null)[]>([]);
@@ -36,23 +43,15 @@ export default function VerificationModal({
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
-          delay: 150
-      }).start();
-
-
+        delay: 150,
+      }).start(() => {
+        setTimeout(() => {
+          inputRefs.current[0]?.focus();
+        }, 150);
+      });
     }
     prevVisible.current = visible;
   }, [visible, overlayAnim]);
-
-  useEffect(() => {
-    const fullCode = code.join("");
-    if (fullCode.length === 6) {
-      setTimeout(() => {
-        onClose();
-        router.push("/");
-      }, 200);
-    }
-  }, [code, onClose]);
 
   const handleKeyPress = (index: number, value: string) => {
     if (value.length > 1) {
@@ -81,16 +80,30 @@ export default function VerificationModal({
     }
   };
 
+  const handleVerify = () => {
+    const fullCode = code.join("");
+    if (fullCode.length === 6) {
+      onVerify(fullCode);
+    }
+  };
+
   const handleClose = () => {
     Animated.timing(overlayAnim, {
       toValue: 0,
       duration: 150,
       useNativeDriver: true,
-    }).start();
+    }).start(() => {
+      onClose();
+    });
   };
 
   return (
-    <Modal visible={visible} transparent statusBarTranslucent animationType="slide">
+    <Modal
+      visible={visible}
+      transparent
+      statusBarTranslucent
+      animationType="slide"
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -105,11 +118,11 @@ export default function VerificationModal({
           />
         </TouchableWithoutFeedback>
 
-        <View
-          className="rounded-t-3xl bg-white px-6 pb-10 pt-6"
-        >
+        <View className="rounded-t-3xl bg-white px-6 pb-10 pt-6">
           <View className="mb-1 flex-row items-center justify-between">
-            <Text className="text-h2 text-text-primary">Verify your email</Text>
+            <Text className="text-h2 text-text-primary">
+              Verify your email
+            </Text>
             <TouchableOpacity onPress={handleClose}>
               <Ionicons name="close" size={24} color="#6B7280" />
             </TouchableOpacity>
@@ -141,36 +154,45 @@ export default function VerificationModal({
                   height: 56,
                   width: 48,
                   borderWidth: 1,
-                  borderColor: "#E5E7EB",
+                  borderColor: error ? "#EF4444" : "#E5E7EB",
                   borderRadius: 12,
                   textAlign: "center",
+                  verticalAlign: "middle",
                   fontFamily: "Poppins-SemiBold",
                   fontSize: 24,
+                  lineHeight: 32,
                   color: "#0D132B",
                 }}
               />
             ))}
           </View>
 
+          {error && (
+            <Text className="mt-2 text-center text-sm text-red-500">
+              {error}
+            </Text>
+          )}
+
           <TouchableOpacity
-            onPress={() => {
-              const fullCode = code.join("");
-              if (fullCode.length === 6) {
-                handleClose();
-                router.push("/");
-              }
-            }}
-            disabled={code.join("").length !== 6}
+            onPress={handleVerify}
+            disabled={code.join("").length !== 6 || isLoading}
             className="mt-6 h-14 items-center justify-center rounded-2xl bg-lingua-purple active:opacity-90 disabled:opacity-50"
           >
             <Text className="text-center font-semibold text-[16px] text-white">
-              Verify
+              {isLoading ? "Verifying..." : "Verify"}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="mt-4 items-center">
-            <Text className="text-body-md text-lingua-purple">Resend code</Text>
-          </TouchableOpacity>
+          {onResendCode && (
+            <TouchableOpacity
+              className="mt-4 items-center"
+              onPress={onResendCode}
+            >
+              <Text className="text-body-md text-lingua-purple">
+                Resend code
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </KeyboardAvoidingView>
     </Modal>
