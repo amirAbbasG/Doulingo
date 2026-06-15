@@ -1,9 +1,7 @@
-import {Redirect, Tabs} from "expo-router";
+import { Tabs} from "expo-router";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
 import {colors} from "@/theme/colors";
-import {useAuth} from "@clerk/expo";
-import {Text, View} from "react-native";
 
 const tabIcons = {
     index: "home",
@@ -14,21 +12,6 @@ const tabIcons = {
 } as const;
 
 export default function TabLayout() {
-    const {isSignedIn, isLoaded} = useAuth();
-
-    if (!isLoaded) {
-        return (
-            <View className="flex-1 items-center justify-center">
-                <Text className="text-body-md text-text-secondary">
-                    Loading...
-                </Text>
-            </View>
-        );
-    }
-
-    if (!isSignedIn) {
-        return <Redirect href="/onboarding" />;
-    }
 
     return (
         <Tabs

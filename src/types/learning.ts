@@ -84,6 +84,8 @@ export interface Unit {
   icon?: string;
 }
 
+export type LessonStatus = "locked" | "available" | "in_progress" | "completed";
+
 export interface PlanItem {
     id: string;
     type: string;
