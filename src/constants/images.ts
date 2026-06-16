@@ -24,3 +24,9 @@ export const lessonIcons: Record<string, string> = {
   food: "https://picsum.photos/id/292/200/200",
   greetings: "https://picsum.photos/id/1012/200/200",
 };
+
+export const teacherImages = {
+  mascot: "https://picsum.photos/id/1074/400/400",
+  userAvatar: "https://picsum.photos/id/1027/200/200",
+  roomBackground: "https://picsum.photos/id/1040/800/600",
+};

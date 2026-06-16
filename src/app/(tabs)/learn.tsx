@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 import { useLanguageStore } from "@/store/language-store";
 import { useLessonStore } from "@/store/lesson-store";
@@ -125,6 +126,11 @@ export default function LearnScreen() {
                                               lesson.id,
                                               "available"
                                           );
+                                      } else {
+                                          router.push({
+                                              pathname: "/lesson/audio-lesson",
+                                              params: { lessonId: lesson.id },
+                                          });
                                       }
                                   }}
                               />
